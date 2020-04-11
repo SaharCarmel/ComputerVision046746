@@ -1,25 +1,8 @@
-# %%
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import torch
 from scipy.signal import argrelextrema
-
-# %matplotlib inline
-
-im = cv2.imread('../data/lessblue.jpeg')
-# plt.imshow(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
-# _ = plt.axis('off')
-# plt.show()
-
-
-# %% constants
-sigma0 = 1
-k = np.sqrt(2)
-levels = [-1, 0, 1, 2, 3, 4]
-thetaC = 0.03
-thetaR = 12
-# %%
 
 
 def createGaussianPyramid(im, sigma0, k, levels):
@@ -47,20 +30,13 @@ def plotCv2Image(im, title='', saveFlag=False, savePath=''):
         plt.savefig(savePath+title+'.png')
 
 
-def converToGrayNormalize(im):
+def convertToGrayNormalize(im):
     norm_image = cv2.normalize(im, None, alpha=0, beta=1,
                                norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     grayscale_im = cv2.cvtColor(norm_image, cv2.COLOR_BGR2GRAY)
     return grayscale_im
 
 
-# pyramid = createGaussianPyramid(
-#     grayscale_im, sigma0=sigma0, k=k, levels=levels)
-# displayPyramid(pyramid)
-# filename = 'sec1.1.png'
-
-
-# %%
 def createDoGPyramid(GaussianPyramid, levels):
     # Produces DoG Pyramid
     # inputs
@@ -77,14 +53,6 @@ def createDoGPyramid(GaussianPyramid, levels):
         DoGPyramid.append(GaussianPyramid[i] - GaussianPyramid[i+1])
     DoGLevels = levels
     return DoGPyramid, DoGLevels
-
-
-# %% sec 1.3
-# DoGpyr, DoGLevels = createDoGPyramid(pyramid, levels=levels)
-# displayPyramid(DoGpyr)
-# plt.savefig('../report/media/'+'sec1-3.png')
-
-# %%
 
 
 def computePrincipalCurvature(DoGPyramid):
@@ -130,12 +98,6 @@ def calculateCurvature(sobelxx, sobelyy, sobelxy):
     hessian, trace, det = assembleHessianTraceDet(sobelxx, sobelyy, sobelxy)
     curvature = np.power(trace, 2) / det
     return curvature
-
-
-# curavaturePyr = computePrincipalCurvature(DoGPyramid=DoGpyr)
-# displayPyramid((curavaturePyr))
-
-# %%
 
 
 def checkScaleMax(DoGPyramid, level, i, j):
@@ -200,28 +162,14 @@ def DoGdetector(im, sigma0, k, levels, th_contrast, th_r):
     # Outputs Description
     # --------------------------------------------------------------------------
     # locsDoG N x 3 matrix where the DoG pyramid achieves a local extrema
-    # in both scale and space, and satisfies the two thresholds.
+    # in both scale and space, and satisfies the two thresholds. (level, x, y)
     # gauss_pyramid A matrix of grayscale images of size (len(levels),imH,imW)
 
     GaussianPyramid = createGaussianPyramid(
         im, sigma0=sigma0, k=k, levels=levels)
     DoGpyr, DoGLevels = createDoGPyramid(GaussianPyramid, levels=levels)
-    displayPyramid(DoGpyr)
+    # displayPyramid(DoGpyr)
     curavaturePyr = computePrincipalCurvature(DoGPyramid=DoGpyr)
-    locsDoG  = getLocalExtrema(DoGpyr, DoGLevels, curavaturePyr, th_contrast, th_r)
+    locsDoG = getLocalExtrema(
+        DoGpyr, DoGLevels, curavaturePyr, th_contrast, th_r)
     return locsDoG, GaussianPyramid
-
-grayImage = converToGrayNormalize(im)
-locsDoG, DoGpyr = DoGdetector(grayImage, sigma0, k, levels, thetaC, thetaR)
-
-#%%
-plt.figure(figsize=(15,15))
-plt.imshow(im)
-x = []
-y = []
-for point in locsDoG:
-    if point[0] == 0:
-        x.append(point[2])
-        y.append(point[1])
-plt.scatter(x,y,marker='+', c='r')
-plt.show()
