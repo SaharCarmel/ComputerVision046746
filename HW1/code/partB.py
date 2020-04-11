@@ -40,7 +40,7 @@ def computeBrief(im, GaussianPyramid, locsDoG, k, levels, compareX, compareY):
     bigY = np.max([maxY, np.abs(minY)])
     for loc in locsDoG:
         if locNotInBoundry(im.shape, loc, bigX, bigY):
-            locs.append(loc)
+            locs.append([loc[2], loc[1], loc[0]])
             desc.append(calculateBRIEF(GaussianPyramid, loc, compareX, compareY))
     locs = np.array(locs)
     desc = np.array(desc)
@@ -126,14 +126,14 @@ def plotMatches(im1, im2, matches, locs1, locs2):
         pt2[0] += im1.shape[1]
         x = np.asarray([pt1[0], pt2[0]])
         y = np.asarray([pt1[1], pt2[1]])
-        plt.plot(x,y,'r')
-        plt.plot(x,y,'g.')
+        plt.plot(x,y,'r', lw=0.1)
+        plt.plot(x,y,'g.', lw=0.1)
     plt.show()
 #%%
 
 
 im1 = cv2.imread('../data/chickenbroth_01.jpg')
-im2 = cv2.imread('../data/chickenbroth_02.jpg')
+im2 = cv2.imread('../data/chickenbroth_03.jpg')
 locs1, desc1 = briefLite(im1)
 locs2, desc2 = briefLite(im2)
 matches = briefMatch(desc1, desc2, ratio=0.9)
