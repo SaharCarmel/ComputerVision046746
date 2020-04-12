@@ -3,6 +3,7 @@ import numpy as np
 import scipy.io as scipyio
 from my_keypoint_det import *
 import matplotlib.pyplot as plt
+import cv2
 
 
 def makeTestPattern(patchWidth, nbits, method='uniform'):
@@ -77,16 +78,16 @@ def briefLite(im):
         grayImage, hyperparams['sigma0'][0][0], hyperparams['k'][0][0], hyperparams['levels'][0], hyperparams['thetaC'][0][0], hyperparams['thetaR'][0][0])
     locs, desc = computeBrief(grayImage, DoGpyr, locsDoG,
                               hyperparams['k'][0][0], hyperparams['levels'][0][0], testPattern['compareX'], testPattern['compareY'])
-    plt.figure(figsize=(15,15))
-    plt.imshow(im)
-    x = []
-    y = []
-    for point in locsDoG:
-        if point[0] == 0:
-            x.append(point[2])
-            y.append(point[1])
-    plt.scatter(x,y,marker='+', c='r')
-    plt.show()
+    # plt.figure(figsize=(15,15))
+    # plt.imshow(im)
+    # x = []
+    # y = []
+    # for point in locsDoG:
+    #     if point[0] == 0:
+    #         x.append(point[2])
+    #         y.append(point[1])
+    # plt.scatter(x,y,marker='+', c='r')
+    # plt.show()
     return locs, desc
 
 from scipy.spatial.distance import cdist
@@ -113,7 +114,7 @@ def briefMatch(desc1, desc2, ratio):
     return matches
 
 def plotMatches(im1, im2, matches, locs1, locs2):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(15,15))
     # draw two images side by side
     imH = max(im1.shape[0], im2.shape[0])
     im = np.zeros((imH, im1.shape[1]+im2.shape[1]), dtype='uint8')
@@ -129,15 +130,47 @@ def plotMatches(im1, im2, matches, locs1, locs2):
         plt.plot(x,y,'r', lw=0.1)
         plt.plot(x,y,'g.', lw=0.1)
     plt.show()
+
+def makeRotationIm(img, startAngle=0, stopAngle=90, n=10):
+    angles = np.linspace(startAngle, stopAngle,n)
+    rows,cols,_ = img.shape
+    imgs = []
+    for angle in angles:
+        M = cv2.getRotationMatrix2D((cols/2,rows/2),angle,1)
+        dst = cv2.warpAffine(img,M,(cols,rows))
+        imgs.append([dst, angle])
+    return imgs
+
+def testRot(im, startAngle=0, stopAngle=90, n=10):
+    matches = []
+    angles = []
+    rotImages = makeRotationIm(im, startAngle, stopAngle, n)
+    baseloc, basedesc = briefLite(im)
+    for img, angle in rotImages:
+        locs, desc = briefLite(img)
+        _match = briefMatch(basedesc, desc, 0.8)
+        matches.append(len(_match))
+        angles.append(angle)
+    return matches, angles
 #%%
 
 
-im1 = cv2.imread('../data/chickenbroth_01.jpg')
-im2 = cv2.imread('../data/chickenbroth_03.jpg')
+im1 = cv2.imread('../data/incline_R.png')
+im2 = cv2.imread('../data/incline_L.png')
 locs1, desc1 = briefLite(im1)
 locs2, desc2 = briefLite(im2)
 matches = briefMatch(desc1, desc2, ratio=0.9)
 plotMatches(im1, im2,matches, locs1, locs2)
+
+
+# %%
+im1 = cv2.imread('../data/chickenbroth_01.jpg')
+matches, angles = testRot(im1)
+plt.figure(figsize=(15,15))
+plt.bar(angles, matches)
+plt.title('# of matches vs rotation angle')
+plt.xlabel('angle')
+plt.ylabel('# of matches')
 
 
 # %%
