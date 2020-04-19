@@ -31,9 +31,11 @@ thetaR  = 12
 def loadImage(fp):
 ###############################################################################
     im = cv2.imread(fp)
+    im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
     #plt.imshow(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
     #_ = plt.axis('off')
     #plt.show()
+    im = cv2.GaussianBlur(im, (11, 11), 1)
     return im
 
 
@@ -88,14 +90,14 @@ def computePrincipalCurvature(DoGPyramid):
         _tempMat = np.zeros_like(_filter)
         Dxx, Dyy, Dxy = getSecondDerivative(_filter)
         for x, y in np.ndindex(Dxx.shape):
-            hessian = np.array([
-                [Dxx[x, y], Dxy[x, y]],
-                [Dxy[x, y], Dyy[x, y]]
-            ])
-            _tempMat[x, y] = calculateCurvature(hessian)
+            Dxx_i = Dxx[x, y]
+            Dyy_i = Dyy[x, y]
+            Dxy_i = Dxy[x, y]
+            _tempMat[x, y] = calculateCurvature(Dxx_i, Dyy_i, Dxy_i)
         PrincipalCurvature.append(_tempMat)
 
     return PrincipalCurvature
+
 
 ###############################################################################
 def getSecondDerivative(im):
@@ -105,11 +107,12 @@ def getSecondDerivative(im):
     Dxy = cv2.Sobel(im, cv2.CV_64F, dx = 1, dy = 1, ksize = 3)
     return Dxx, Dyy, Dxy
 
+
 ###############################################################################
-def calculateCurvature(hessian):
+def calculateCurvature(Dxx, Dyy, Dxy):
 ###############################################################################
-    tr = np.trace(hessian)
-    det = np.linalg.det(hessian)
+    tr = Dxx + Dyy
+    det = Dxx * Dyy - Dxy * Dxy
     if det == 0:
         det = np.finfo(float).eps
     R = tr ** 2 / det
@@ -127,47 +130,39 @@ def getLocalExtrema(DoGPyramid, DoGLevels, PrincipalCurvature,
 
     for level, im in enumerate(DoGPyramid):
         mask_c = np.abs(im) > th_contrast
-        mask_r = PrincipalCurvature[level] < th_r
+        mask_r = np.abs(PrincipalCurvature[level]) < th_r
         mask_unified = mask_c & mask_r
 
         valid_coords = np.where(mask_unified == True)
         for pt in zip(valid_coords[0], valid_coords[1]):
             currLevelVal = im[pt]
-            if isSpatialExtrema(pt, level, DoGPyramid) is False:
-                continue
-            currLevelNeighbors = findEightNeighbors(pt)
-            if isLevelExtrema(currLevelVal, currLevelNeighbors, im, max_x, max_y) is True:
+            spatialNeighborsVals = getSpatialVals(pt, level, DoGPyramid, max_x, max_y)
+            max_spatial = max(spatialNeighborsVals)
+            min_spatial = min(spatialNeighborsVals)
+            if currLevelVal < min_spatial or currLevelVal > max_spatial:
                 locsDoG.append(pt + (level,))
 
     return locsDoG
 
-
 ###############################################################################
-def isSpatialExtrema(pt, level, DoGPyramid):
+def getSpatialVals(pt, level, DoGPyramid, max_x, max_y):
 ###############################################################################
     maxLevel = len(DoGPyramid) - 1
-    currVal = DoGPyramid[level][pt]
+    vals = []
 
-    if level == maxLevel:
-        prevVal = DoGPyramid[level - 1][pt]
-        if currVal > prevVal or currVal < prevVal:
-            return True
-        else:
-            return False
-    elif level == 0:
-        nextVal = DoGPyramid[level + 1][pt]
-        if currVal > nextVal or currVal < nextVal:
-            return True
-        else:
-            return False
-    else:
-        nextVal = DoGPyramid[level + 1][pt]
-        prevVal = DoGPyramid[level - 1][pt]
-        if (currVal > prevVal and currVal > nextVal) or \
-            (currVal < prevVal and currVal < nextVal):
-            return True
-        else:
-            return False
+    if level != maxLevel:
+        vals.append(DoGPyramid[level + 1][pt])
+    if level != 0:
+        vals.append(DoGPyramid[level - 1][pt])
+
+    sameLevelNeighbors = findEightNeighbors(pt)
+    for p in sameLevelNeighbors:
+        x, y = p
+        if x > max_x or x < 0 or y > max_y or y < 0:
+            continue
+        vals.append(DoGPyramid[level][p])
+
+    return vals
 
 
 ###############################################################################
@@ -184,23 +179,6 @@ def findEightNeighbors(pt):
     pt8 = (x + 1, y + 1)
     return pt1, pt2, pt3, pt4, pt5, pt6, pt7, pt8
     
-
-###############################################################################
-def isLevelExtrema(currLevelVal, currLevelNeighbors, im, max_x, max_y):
-###############################################################################
-    vals = []
-    for p in currLevelNeighbors:
-        x, y = p
-        if x > max_x or x < 0 or y > max_y or y < 0:
-            continue
-        vals.append(im[p])
-
-    max_val = max(vals)
-    min_val = min(vals)
-    if currLevelVal > max_val or currLevelVal < min_val:
-        return True
-    else:
-        return False
 
 ###############################################################################
 def DoGdetector(im, sigma0, k, levels, th_contrast, th_r):
