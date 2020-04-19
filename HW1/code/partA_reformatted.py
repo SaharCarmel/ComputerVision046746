@@ -62,16 +62,9 @@ def displayPyramid(pyramid):
 ###############################################################################
 def converToGrayNormalize(im):
 ###############################################################################
-    norm_image = cv2.normalize(
-        im, 
-        None, 
-        alpha = 0, 
-        beta = 1,
-        norm_type = cv2.NORM_MINMAX, 
-        dtype = cv2.CV_32F
-    )
-    im_grayscale = cv2.cvtColor(norm_image, cv2.COLOR_BGR2GRAY)
-    return im_grayscale
+    im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    im = im / 255
+    return im
 
 ###############################################################################
 def createDoGPyramid(GaussianPyramid, levels):
@@ -126,116 +119,88 @@ def calculateCurvature(hessian):
 def getLocalExtrema(DoGPyramid, DoGLevels, PrincipalCurvature, 
     th_contrast, th_r):
 ###############################################################################
-    extrema = []
-    for level, im in enumerate(DoGPyramid):
-        level_minima, level_maxima = findLevelExtrema(im)
-
-        if level == 0:
-            prevLevel = None
-        else:
-            prevLevel = DoGPyramid[level - 1]
-        
-        if level == len(DoGPyramid) - 1:
-            nextLevel = None
-        else:
-            nextLevel = DoGPyramid[level + 1]
-        
-        if prevLevel is None and nextLevel is None:
-            continue
-
-        for pt in level_minima:
-            if isSpatialExtrema(pt, prevLevel, im, nextLevel, 'min'):
-                extrema.append(pt + (level,))
-        for pt in level_maxima:
-            if isSpatialExtrema(pt, prevLevel, im, nextLevel, 'max'):
-                extrema.append(pt + (level,))
-
     locsDoG = []
-    
-    print('number of extrema before threshold: ' + str(len(extrema)))
 
-    for pt in extrema:
-        x, y, level = pt
-        if np.abs(DoGPyramid[level][x, y]) > th_contrast and \
-            PrincipalCurvature[level][x, y] < th_r:
-            locsDoG.append(pt)
+    max_x, max_y = DoGPyramid[0].shape
+    max_x-=1
+    max_y-=1
 
-    print('number of extrema after threshold: ' + str(len(locsDoG))) 
+    for level, im in enumerate(DoGPyramid):
+        mask_c = np.abs(im) > th_contrast
+        mask_r = PrincipalCurvature[level] < th_r
+        mask_unified = mask_c & mask_r
+
+        valid_coords = np.where(mask_unified == True)
+        for pt in zip(valid_coords[0], valid_coords[1]):
+            currLevelVal = im[pt]
+            if isSpatialExtrema(pt, level, DoGPyramid) is False:
+                continue
+            currLevelNeighbors = findEightNeighbors(pt)
+            if isLevelExtrema(currLevelVal, currLevelNeighbors, im, max_x, max_y) is True:
+                locsDoG.append(pt + (level,))
 
     return locsDoG
 
 
 ###############################################################################
-def findEightNeighbors(x, y):
+def isSpatialExtrema(pt, level, DoGPyramid):
 ###############################################################################
-    p1 = (x - 1, y - 1) 
-    p2 = (x, y - 1)
-    p3 = (x + 1, y - 1)
-    p4 = (x - 1, y)
-    p5 = (x + 1, y)
-    p6 = (x - 1, y + 1)
-    p7 = (x, y + 1)
-    p8 = (x + 1, y + 1)
-    return p1, p2, p3, p4, p5, p6, p7, p8
+    maxLevel = len(DoGPyramid) - 1
+    currVal = DoGPyramid[level][pt]
 
+    if level == maxLevel:
+        prevVal = DoGPyramid[level - 1][pt]
+        if currVal > prevVal or currVal < prevVal:
+            return True
+        else:
+            return False
+    elif level == 0:
+        nextVal = DoGPyramid[level + 1][pt]
+        if currVal > nextVal or currVal < nextVal:
+            return True
+        else:
+            return False
+    else:
+        nextVal = DoGPyramid[level + 1][pt]
+        prevVal = DoGPyramid[level - 1][pt]
+        if (currVal > prevVal and currVal > nextVal) or \
+            (currVal < prevVal and currVal < nextVal):
+            return True
+        else:
+            return False
 
-###############################################################################
-def findLevelExtrema(im):
-###############################################################################
-    max_x, max_y = im.shape
-    max_x-=1
-    max_y-=1
-    max_pts = []
-    min_pts = []
-
-    for x, y in np.ndindex(im.shape):
-        currIndex = (x, y)
-        currVal = im[currIndex]
-        currPixelCoords = findEightNeighbors(x, y)
-        vals = []
-        for p in currPixelCoords:
-            x, y = p
-            if x > max_x or x < 0 or y > max_y or y < 0:
-                continue
-            vals.append(im[p])
-
-        max_val = max(vals)
-        min_val = min(vals)
-        if currVal > max_val:
-            max_pts.append(currIndex)
-            continue
-        if currVal < min_val:
-            min_pts.append(currIndex)
-
-    return min_pts, max_pts
 
 ###############################################################################
-def isSpatialExtrema(pt, prevLevel, currLevel, nextLevel, extremumType):
+def findEightNeighbors(pt):
 ###############################################################################
-    currVal = currLevel[pt]
+    x, y = pt
+    pt1 = (x - 1, y - 1) 
+    pt2 = (x, y - 1)
+    pt3 = (x + 1, y - 1)
+    pt4 = (x - 1, y)
+    pt5 = (x + 1, y)
+    pt6 = (x - 1, y + 1)
+    pt7 = (x, y + 1)
+    pt8 = (x + 1, y + 1)
+    return pt1, pt2, pt3, pt4, pt5, pt6, pt7, pt8
     
-    if prevLevel is None:
-        if extremumType == 'min':
-            prevVal = np.PINF
-        else:
-            prevVal = np.NINF
-    else:
-        prevVal = prevLevel[pt]
 
-    if nextLevel is None:
-        if extremumType == 'min':
-            nextVal = np.PINF
-        else:
-            nextVal = np.NINF
-    else:
-        nextVal = nextLevel[pt]
+###############################################################################
+def isLevelExtrema(currLevelVal, currLevelNeighbors, im, max_x, max_y):
+###############################################################################
+    vals = []
+    for p in currLevelNeighbors:
+        x, y = p
+        if x > max_x or x < 0 or y > max_y or y < 0:
+            continue
+        vals.append(im[p])
 
-    if extremumType == 'min' and currVal < prevVal and currVal < nextVal:
+    max_val = max(vals)
+    min_val = min(vals)
+    if currLevelVal > max_val or currLevelVal < min_val:
         return True
-    elif extremumType == 'max' and currVal > prevVal and currVal > nextVal:
-        return True
-
-    return False
+    else:
+        return False
 
 ###############################################################################
 def DoGdetector(im, sigma0, k, levels, th_contrast, th_r):
