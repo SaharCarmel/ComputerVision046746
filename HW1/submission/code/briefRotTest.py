@@ -41,7 +41,8 @@ def testRot(im, startAngle = 0, stopAngle = 90, n = 10):
 #                                main                                         #
 ###############################################################################
 def main():
-    fp_im = os.path.join(os.getcwd(), 'data', 'model_chickenbroth.jpg')
+    fp_module = os.path.dirname(__file__)
+    fp_im = os.path.join(fp_module, 'data', 'model_chickenbroth.jpg')    
     im = loadImage(fp_im)
     matches, angles = testRot(im)
     plt.figure(figsize = (15,15))

@@ -298,7 +298,8 @@ def plotKeypoints(im, locsDoG, marker, color):
 #                                main                                         #
 ###############################################################################
 def main():
-    fp_im = os.path.join(os.getcwd(), 'data', 'model_chickenbroth.jpg')
+    fp_module = os.path.dirname(__file__)
+    fp_im = os.path.join(fp_module, 'data', 'model_chickenbroth.jpg')
     im = loadImage(fp_im)
     im_grayscale = convertToGrayNormalize(im)
     locsDoG, GaussianPyramid = DoGdetector(

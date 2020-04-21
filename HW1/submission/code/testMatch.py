@@ -63,8 +63,9 @@ def plotMatches(im1, im2, matches, locs1, locs2):
 #                                main                                         #
 ###############################################################################
 def main():
-    fp_im1 = os.path.join(os.getcwd(), 'data', 'model_chickenbroth.jpg')
-    fp_im2 = os.path.join(os.getcwd(), 'data', 'model_chickenbroth.jpg')
+    fp_module = os.path.dirname(__file__)
+    fp_im1 = os.path.join(fp_module, 'data', 'model_chickenbroth.jpg')
+    fp_im2 = os.path.join(fp_module, 'data', 'model_chickenbroth.jpg')
     im1 = loadImage(fp_im1)
     im2 = loadImage(fp_im2)
     locs1, desc1 = briefLite(im1)
