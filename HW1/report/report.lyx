@@ -861,7 +861,18 @@ Summary
 \end_layout
 
 \begin_layout Standard
-Something
+Following the paper, we have fabricated a uniform pattern for comparison
+ and saved it in a mat file.
+ Using the same pattern for each 2 images we have compared the pixel pairs
+ for each image upon each image and created a binary string with a given
+ length each represents if the statement is valid for each pair of pixels.
+ Lastly we have used a given function in order to determine the length between
+ strings for each image and extracted from those the common corners found
+ in each image.
+ Lastly we have tested the descriptor performance over rotated images and
+ we have found a weakness finding common corners.
+ This is mainly due to the pattern we have generated being A-symmetrical.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -905,7 +916,9 @@ We've chosen to randomize our
 \end_layout
 
 \begin_layout Standard
-...
+We simply iterated over the pattern we have fabricated earlier, compared
+ each of the pixels pairs and assembled a 1's and 0's string for each comparison
+ for each corner.
 \end_layout
 
 \begin_layout Subsection
