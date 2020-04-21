@@ -116,7 +116,8 @@ def briefLite(im):
     #
     # OUPUTS
     # see computeBrief(...)
-    testpatternPath = os.path.join(os.getcwd(), 'code', 'testpattern.mat')
+    fp_module = os.path.dirname(__file__)
+    testpatternPath = os.path.join(fp_module, 'testpattern.mat')      
     testPattern = scipyio.loadmat(testpatternPath)
 
     grayImage = convertToGrayNormalize(im)
