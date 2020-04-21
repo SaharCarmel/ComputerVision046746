@@ -47,7 +47,7 @@ def computeBrief(im, GaussianPyramid, locsDoG, k, levels, compareX, compareY):
     bigX = np.max([maxX, np.abs(minX)])
     bigY = np.max([maxY, np.abs(minY)])
     for loc in locsDoG:
-        if locNotInBoundry(im.shape, loc, bigX, bigY):
+        if locInBoundry(im.shape, loc, bigX, bigY):
             locs.append([loc[2], loc[1], loc[0]])
             desc.append(calculateBRIEF(GaussianPyramid, 
                     loc, 
@@ -60,11 +60,10 @@ def computeBrief(im, GaussianPyramid, locsDoG, k, levels, compareX, compareY):
     return locs, desc
 
 
-def locNotInBoundry(imsize, loc, bigX, bigY):
+def locInBoundry(imsize, loc, bigX, bigY):
     x = loc[1]
     y = loc[2]
-    if (x + bigX < imsize[0] and x - bigX > 0) and \
-        (y + bigY < imsize[0] and y - bigY > 0):
+    if (x + bigX < imsize[0] and x - bigX > 0) and (y + bigY < imsize[1] and y - bigY > 0):
         return True
     else:
         return False
@@ -84,7 +83,8 @@ def calculateBRIEF(GaussianPyramid, loc, compareX, compareY):
 
 def briefLite(im):
     #hyperparams = scipyio.loadmat('code/hyperparams.mat')
-    testPattern = scipyio.loadmat('code/testpattern.mat')
+    testpatternPath = os.path.join(os.getcwd(), 'testpattern.mat')
+    testPattern = scipyio.loadmat(testpatternPath)
 
     grayImage = convertToGrayNormalize(im)
     locsDoG, DoGPyramid = DoGdetector(
@@ -177,8 +177,8 @@ def testRot(im, startAngle = 0, stopAngle = 90, n = 10):
 #                                main                                         #
 ###############################################################################
 def main():
-    fp_im1 = os.path.join(os.getcwd(), 'data','pf_desk.jpg')
-    fp_im2 = os.path.join(os.getcwd(), 'data','pf_floor.jpg')
+    fp_im1 = os.path.join(os.getcwd(),'..', 'data','pf_desk.jpg')
+    fp_im2 = os.path.join(os.getcwd(),'..', 'data','pf_scan_scaled.jpg')
     im1 = loadImage(fp_im1)
     im2 = loadImage(fp_im2)
 
@@ -202,5 +202,5 @@ def bonus():
     plt.ylabel('# of matches')
 
 if __name__ == "__main__":
-    #main()
+    # main()
     bonus()

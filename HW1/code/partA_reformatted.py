@@ -121,7 +121,7 @@ def getLocalExtrema(DoGPyramid, DoGLevels, PrincipalCurvature,
             max_spatial = max(spatialNeighborsVals)
             min_spatial = min(spatialNeighborsVals)
             if currLevelVal < min_spatial or currLevelVal > max_spatial:
-                locsDoG.append(pt + (level,))
+                locsDoG.append((level,) + pt)
 
     return locsDoG
 
@@ -205,3 +205,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# %%
