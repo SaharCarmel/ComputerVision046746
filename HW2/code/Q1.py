@@ -18,18 +18,20 @@ class Net(nn.module):
 
         )
 #%% dataloading
-transform = transforms.Compose([transforms.ToTensor()])
-svhnData = torchvision.datasets.SVHN('data', split='train', transform=None,
-target_transform=transform, download=True)
-dataloader = torch.utils.data.DataLoader(svhnData,
-                                          batch_size=4,
-                                          shuffle=True,
-                                          num_workers=0)
-inputs, classes = next(iter(dataloader))
+transform = transforms.Compose([
+    transforms.ToTensor()
+])
+
+# dataset and data loader
+svhn_dataset = torchvision.datasets.SVHN(root='data',
+                                split='train',
+                                transform=transform,
+                                download=True)
+inputs, classes = next(iter(svhn_dataset))
 # %%
 fig, axes = plt.subplots(1, 5, figsize=(12,2.5))
-for i in data_loader:
-    axes[i].imshow(svhnData[i][0])
-    axes[i].set_title(svhnData[i][1])
+for i, (image, class_) in enumerate(zip(inputs, classes)):
+    axes[i].imshow(image)
+    axes[i].set_title(class_)
 
 # %%
