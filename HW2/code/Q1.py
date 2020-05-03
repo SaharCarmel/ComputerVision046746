@@ -17,14 +17,20 @@ print(os.getcwd())
 # wandb.init(project="SVHN-project")
 #%% config
 # WandB – Initialize a new run
-wandb.init(entity="carmel", project="SVHN-project")
+# wandb.init(entity="carmel", project="SVHN-project")
 
 # WandB – Config is a variable that holds and saves hyperparameters and inputs
-config = wandb.config          # Initialize config
-config.batch_size = 128         # input batch size for training (default: 64)
-config.epochs = 1          # number of epochs to train (default: 10)
-config.lr = 1e-4              # learning rate (default: 0.01)
-config.log_interval = 1     # how many batches to wait before logging training status
+
+hyperparameter_defaults = dict(
+    # dropout = 0.5,
+    # channels_one = 16,
+    # channels_two = 32,
+    batch_size = 128,
+    lr = 0.001,
+    epochs = 2,
+    )
+wandb.init(config=hyperparameter_defaults)
+config = wandb.config
 classses = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 criterion = nn.CrossEntropyLoss()
