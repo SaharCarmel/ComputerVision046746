@@ -20,17 +20,23 @@ print(os.getcwd())
 # wandb.init(entity="carmel", project="SVHN-project")
 
 # WandB – Config is a variable that holds and saves hyperparameters and inputs
+class Cfg():
+    def __init__(self, batch_size, lr, epochs):
+        self.batch_size = batch_size
+        self.lr = lr
+        self.epochs = epochs
 
-hyperparameter_defaults = dict(
-    # dropout = 0.5,
-    # channels_one = 16,
-    # channels_two = 32,
-    batch_size = 128,
-    lr = 0.001,
-    epochs = 2,
-    )
-wandb.init(config=hyperparameter_defaults)
-config = wandb.config
+config = Cfg(1024, 0.001, 34)
+# hyperparameter_defaults = dict(
+#     # dropout = 0.5,
+#     # channels_one = 16,
+#     # channels_two = 32,
+#     batch_size = 128,
+#     lr = 0.001,
+#     epochs = 2,
+#     )
+# wandb.init(config=hyperparameter_defaults)
+# config = wandb.config
 classses = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 criterion = nn.CrossEntropyLoss()
@@ -106,13 +112,13 @@ def calculate_accuracy(model, dataloader, device, classes,step,  set_='train'):
             for i, l in enumerate(labels):
                 confusion_matrix[l.item(), predicted[i].item()] += 1 
     model_accuracy = total_correct / total_images * 100
-    if set_ == 'test':
-        example_images = []
-        example_images.append(wandb.Image(
-            data[0], caption="Pred: {} Truth: {}".format(classes[predicted[0].item()], classes[labels[0]])))
-        wandb.log({
-            "Examples": example_images,
-            "Test Accuracy": model_accuracy}, step=step)
+    # if set_ == 'test':
+    #     example_images = []
+    #     # example_images.append(wandb.Image(
+    #     #     data[0], caption="Pred: {} Truth: {}".format(classes[predicted[0].item()], classes[labels[0]])))
+    #     # wandb.log({
+    #     #     "Examples": example_images,
+    #     #     "Test Accuracy": model_accuracy}, step=step)
     return model_accuracy, confusion_matrix
 #%% dataloading
 transform_train = transforms.Compose([
@@ -142,12 +148,12 @@ testLoader = torch.utils.data.DataLoader(testset,
                                           shuffle=True,
                                           num_workers=0)
 
-#%%
-images, classes = next(iter(trainLoader))
-fig, axes = plt.subplots(1, 5, figsize=(12,2.5))
-for i, (image, class_) in enumerate(zip(images, classes)):
-    axes[i].imshow(convert_to_imshow_format(image))
-    axes[i].set_title(np.array(class_))
+#%% show 5 images
+# images, classes = next(iter(trainLoader))
+# fig, axes = plt.subplots(1, 5, figsize=(12,2.5))
+# for i, (image, class_) in enumerate(zip(images, classes)):
+#     axes[i].imshow(convert_to_imshow_format(image))
+#     axes[i].set_title(np.array(class_))
 
 # %%
 model = Net().to(device)
@@ -155,7 +161,7 @@ pytorch_total_params = sum(p.numel() for p in model.parameters())
 
 #%%
 # Magic
-wandb.watch(model, log="all")
+# wandb.watch(model, log="all")
 
 optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
 
@@ -187,7 +193,7 @@ for epoch in range(1, config.epochs + 1):
     # Calculate training/test set accuracy of the existing model
     train_accuracy, _ = calculate_accuracy(model, trainLoader, device,classses,i, set_='train')
     test_accuracy, _ = calculate_accuracy(model, testLoader, device,classses,i, set_='test')
-    wandb.log({"Train Accuracy":train_accuracy, "Epoch":i}, step=i)
+    # wandb.log({"Train Accuracy":train_accuracy, "Epoch":i}, step=i)
 
     log = "Epoch: {} | Loss: {:.4f} | Training accuracy: {:.3f}% | Test accuracy: {:.3f}% | ".format(epoch, running_loss, train_accuracy, test_accuracy)
     epoch_time = time.time() - epoch_time
@@ -200,7 +206,7 @@ for epoch in range(1, config.epochs + 1):
         if not os.path.isdir('checkpoints'):
             os.mkdir('checkpoints')
         torch.save(model.state_dict(), './checkpoints/SVHN.h5')
-        wandb.save('model.h5')
+        # wandb.save('model.h5')
 
 print('==> Finished Training ...')
 
