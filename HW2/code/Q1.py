@@ -133,7 +133,7 @@ target_transform=None, download=False)
 testset = torchvision.datasets.SVHN('SVHN', split='test', transform=transform_test,
 target_transform=None, download=True)
 trainLoader = torch.utils.data.DataLoader(trainset,
-                                          batch_size=config.batch_size,
+                                          batch_size=5,
                                           shuffle=True,
                                           num_workers=0)
 
@@ -143,14 +143,17 @@ testLoader = torch.utils.data.DataLoader(testset,
                                           num_workers=0)
 
 #%%
-# images, classes = next(iter(trainLoader))
-# fig, axes = plt.subplots(1, 5, figsize=(12,2.5))
-# for i, (image, class_) in enumerate(zip(images, classes)):
-#     axes[i].imshow(convert_to_imshow_format(image))
-#     axes[i].set_title(class_)
+images, classes = next(iter(trainLoader))
+fig, axes = plt.subplots(1, 5, figsize=(12,2.5))
+for i, (image, class_) in enumerate(zip(images, classes)):
+    axes[i].imshow(convert_to_imshow_format(image))
+    axes[i].set_title(np.array(class_))
 
 # %%
 model = Net().to(device)
+pytorch_total_params = sum(p.numel() for p in model.parameters())
+
+#%%
 # Magic
 wandb.watch(model, log="all")
 

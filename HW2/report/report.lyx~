@@ -113,7 +113,7 @@ Computer Vision 046746
 \begin_inset Newline newline
 \end_inset
 
-HW 01
+HW 02
 \end_layout
 
 \begin_layout Standard
@@ -182,18 +182,8 @@ Nadav Gelfer
 
 \end_layout
 
-\begin_layout Standard
-
-\lang english
-\begin_inset FormulaMacro
-\newcommand{\dg}{^{\circ}}
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
-Keypoint detector
+Design and build a CNN classifier
 \end_layout
 
 \begin_layout Subsection*
@@ -201,252 +191,1179 @@ Summary
 \end_layout
 
 \begin_layout Standard
-After loading the image, converting to gray and normalizing we created the
- DoG pyramid using the provided code.
- To implement Q1.4, we used 
-\begin_inset Formula $cv2.Sobel$
+...
+\end_layout
+
+\begin_layout Subsection
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 5pics.svg
+	lyxscale 10
+	width 80text%
+
 \end_inset
 
- to calculate 
-\begin_inset Formula $D_{xx},D_{yy}$
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+5 example images from the SVHN dataset
+\end_layout
+
 \end_inset
 
- and 
-\begin_inset Formula $D_{xy}$
+
+\end_layout
+
 \end_inset
 
- for each level of the pyramid.
- Using the derivative matrix, we calculated the curvature ratio, 
-\begin_inset Formula $R$
+
+\end_layout
+
+\begin_layout Subsection
+Describe the architecture of the CNN
+\begin_inset Newline newline
 \end_inset
 
-, pixelwise and stored the results.
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="27" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# Parameters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output Shape
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+864, 32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,32,32,32
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
  
 \end_layout
 
-\begin_layout Standard
-In order to implement Q1.5 with reasonable complexity, we used masks to filter
- possible extrema points which do not satisfy the 
-\begin_inset Formula $\theta_{c}$
 \end_inset
-
- and 
-\begin_inset Formula $\theta_{r}$
-\end_inset
-
- threshold.
- Such approach was required because the implementation of spatial extrema
- point detection has far greater complexity, and because we found empirically
- that only about 
-\begin_inset Formula $10\%-15\%$
-\end_inset
-
- of the extrema point satisfy both thresholds.
-\end_layout
-
-\begin_layout Standard
-Q1.6 simply wraps all of the implemented functions.
-\end_layout
-
-\begin_layout Subsection
-\begin_inset space ~
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The loaded image is simply:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.1.png
-	lyxscale 50
-	scale 50
+32, 32
+\end_layout
 
 \end_inset
-
-
-\end_layout
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+1024,32,32,32
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-Loaded image
+Activation 1
 \end_layout
 
 \end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We've used 
-\begin_inset Formula $cv2.cvtColor$
-\end_inset
-
- to transform from 
-\begin_inset Formula $BGR$
-\end_inset
-
- layout to 
-\begin_inset Formula $RGB$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-\begin_inset space ~
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We converted the image to grayscale using 
-\begin_inset Formula $cv2.cvtColor$
-\end_inset
-
- and normalized its values to 
-\begin_inset Formula $\left[0,1\right]$
-\end_inset
-
- using division by 
-\begin_inset Formula $255$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Using the attached function we receive the following pyramid:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.2.png
-	lyxscale 50
-	scale 45
+ReLU(inplace=True)
+\end_layout
 
 \end_inset
-
-
-\end_layout
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-Gaussian pyramid
+1024,32,32,32
 \end_layout
 
 \end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The shape of the GaussianPyramid matrix is 
-\begin_inset Formula $1\times\text{len}\left(levels\right)$
-\end_inset
-
- where each element is of size 
-\begin_inset Formula $imH\times imW$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-\begin_inset space ~
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The output pyramid is as follows:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.3.png
-	lyxscale 50
-	scale 45
+Conv 2
+\end_layout
 
 \end_inset
-
-
-\end_layout
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-Difference of Gaussian pyramid
+18432, 64
 \end_layout
 
 \end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
+\begin_layout Plain Layout
+1024,64,32,32
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \end_layout
 
 \end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
+\begin_layout Plain Layout
+1024,64,32,32
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maxpool 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \end_layout
 
-\begin_layout Standard
-Where each element is received by simply substracting the previous level.
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,64,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv 3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+73728, 128
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
  
 \end_layout
 
-\begin_layout Standard
-The shape of the matrix is similar to that of the Gaussian pyramid and differs
- only by having one less level due to the nature of the calculation, namely
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+128, 128
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv 4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+147456, 128
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,16,16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maxpool 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dropout 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dropout2d(p=0.05, inplace=False)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,128,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv 5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+294912, 256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm 3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
  
-\begin_inset Formula $1\times\left(\text{len}\left(levels\right)-1\right)$
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+256, 256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv 6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+589824, 256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,8,8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MaxPool 3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,256,4,4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Flatten 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,4096
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear(in_features=4096, out_features=1024, bias=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4194304, 1024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,1024
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,1024
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear(in_features=1024, out_features=512, bias=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+524288, 512
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,512
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Activation 8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ReLU(inplace=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,512
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dropout 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dropout(p=0.1, inplace=False)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,512
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear 3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear(in_features=512, out_features=10, bias=True)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5120, 10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024,10
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset
 
- where each element is of size 
-\begin_inset Formula $imH\times imW$
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Network arch
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Network-architecture"
+
+\end_inset
+
+itecture
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We have used the architecture noted in Table-
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Network-architecture"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
 .
+\begin_inset Newline newline
+\end_inset
+
+The main considerations were: 
+\end_layout
+
+\begin_layout Itemize
+We have used small features layers in the CNN in order to capture the fine
+ details of the digits, since the images are small and the digits have fine
+ details.
+\end_layout
+
+\begin_layout Itemize
+Training time: We could not delve any deeper due to computational limitations.
+\end_layout
+
+\begin_layout Itemize
+We have used RelU activation in order to solve the vanishing gradient problem
+ and also to ease the computations.
+\end_layout
+
+\begin_layout Itemize
+We have used 3 Linear layers with the last one with size of 10 as the number
+ of digits we needed to classify.
+ The sizes were borrowed from a known MNIST architecture since there are
+ a lot of similarities between the problems.
+\end_layout
+
+\begin_layout Standard
+The input dimension is 3 by 28 on 28 on batch size which in the end (Will
+ be explained in the hyper-parameters section) was 1024.
+ In the end we got 1024 by 10 which is the batch size on the number of available
+ outputs.
+\end_layout
+
+\begin_layout Standard
+We can see the parameters of each layer in the table above.
+ The total number is: 
+\begin_inset Formula $5852170$
+\end_inset
+
+ trainable parameters.
 \end_layout
 
 \begin_layout Subsection
@@ -457,107 +1374,8 @@ The shape of the matrix is similar to that of the Gaussian pyramid and differs
 \end_layout
 
 \begin_layout Standard
-We used a Sobel filter with a kernel size of 3 to calculate the derivatives
- 
-\begin_inset Formula $D_{xx},D_{yy}$
-\end_inset
-
- and 
-\begin_inset Formula $D_{xy}$
-\end_inset
-
-.
- Then we calculated the curvature ratio, 
-\begin_inset Formula $R$
-\end_inset
-
-, pixelwise for each level.
-\end_layout
-
-\begin_layout Standard
-To avoid division by zero in the case of 
-\begin_inset Formula $\det\left(H\right)=0$
-\end_inset
-
-, we set the value of 
-\begin_inset Formula $\det\left(H\right)$
-\end_inset
-
- to 
-\begin_inset Formula $numpy$
-\end_inset
-
-'s epsilon in such case.
-\end_layout
-
-\begin_layout Subsection
-\begin_inset space ~
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In order to satisfy both thresholds and find all spatial extremums, we've
- used masks:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-lstparams "language=Python,numbers=left"
-inline false
-status open
-
-\begin_layout Plain Layout
-
-mask_c = np.abs(im) > th_contrast         
-\end_layout
-
-\begin_layout Plain Layout
-
-mask_r = np.abs(PrincipalCurvature[level]) < th_r         
-\end_layout
-
-\begin_layout Plain Layout
-
-mask_unified = mask_c & mask_r
-\end_layout
-
-\begin_layout Plain Layout
-
-valid_pixels = np.where(mask_unified == True)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using masks allowed us to skip the costly action of calculating a 10-neighborhoo
-d extrema for each pixel in the image by allowing us to loop over a much
- smaller set of pixels which satisfy both thresholds.
-\end_layout
-
-\begin_layout Standard
-For each pixel that satisfies both thresholds, we considered the pixel an
- extrema point if it was either the maximum or the minimum of it's neighbors.
- 
-\end_layout
-
-\begin_layout Subsection
-\begin_inset space ~
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Detected keypoints for the input image 
-\begin_inset Formula $model\text{{\text{\_}}}chickenbroth.jpg$
-\end_inset
-
-:
+We have made as sweep on our trainable hyper-parameters.
+ We can see the results in 
 \end_layout
 
 \begin_layout Standard
@@ -569,9 +1387,9 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename media/1.6_chicken.png
-	lyxscale 50
-	scale 30
+	filename hyperparmeter_tuning.svg
+	lyxscale 10
+	width 90col%
 
 \end_inset
 
@@ -582,43 +1400,8 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Keypoints for input image 
-\begin_inset Formula $model\text{{\text{\_}}}chickenbroth.jpg$
-\end_inset
-
-
+Hyper parameter sweep
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using the same code for 
-\begin_inset Formula $pf{\text{\_}}pile.jpg$
-\end_inset
-
- yields the following result:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.6_pile.png
-	lyxscale 50
-	scale 30
 
 \end_inset
 
@@ -626,241 +1409,16 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Keypoints for input image 
-\begin_inset Formula $pf{\text{\_}}pile.jpg$
-\end_inset
-
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using a picture we've taken outside and resized to 
-\begin_inset Formula $512\times512$
-\end_inset
-
- we get:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.6_ourpic_plain.png
-	lyxscale 50
-	scale 35
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename media/1.6_ourpic.png
-	lyxscale 50
-	scale 35
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Our image and it's keypoints, side by side
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-From the above samples it's obvious that there are many keypoints and not
- all of them describe a desirable feature.
- In order to improve the results, we used a Gaussian blur filter to smoothen
- the image.
- Such action reduces the effect of noise and further enhances the detection
- of corners over edges.
- The same picture we've taken after applying 
-\begin_inset Formula $cv2.GaussianBlur$
-\end_inset
-
- yields the following results:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/1.6_ourpic_blur.png
-	lyxscale 50
-	scale 37
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Our image and it's keypoints after applying Gaussian blur
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The effect of the blur shows quite well using a simple polygons picture
- that was posted on Facebook:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/polygons_blur.png
-	lyxscale 50
-	scale 25
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename media/polygons_noblur.png
-	lyxscale 50
-	scale 25
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Keypoints for the blurred picture compared to the non-blurred picture
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This image demonstrates quite well how smoothing the picture using a Gaussian
- blur eliminates most false detections which occur due to noise and pixelation
- along the edges of the polygons.
-\end_layout
-
-\begin_layout Standard
-The effect is shown easily by comparing the corner of the orange square
- zoomed in:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/edge_blur.png
-	lyxscale 50
-	scale 25
-
-\end_inset
-
-
-\begin_inset Formula $\quad\quad$
-\end_inset
-
-
-\begin_inset Graphics
-	filename media/edge_not_blur.png
-	lyxscale 50
-	scale 25
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Blurred corner compared to the original corner
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
 \end_inset
 
 
 \end_layout
 
 \begin_layout Section
-BRIEF descriptor
+Analyzing a pre-trained CNN
 \end_layout
 
 \begin_layout Subsection*
@@ -868,26 +1426,7 @@ Summary
 \end_layout
 
 \begin_layout Standard
-Following the paper, we have fabricated a uniform pattern for comparison
- and saved it in a mat file.
- Using the same pattern for each 2 images we have compared the pixel pairs
- for each image upon each image and created a binary string with a given
- length each represents if the statement is valid for each pair of pixels.
- 
-\end_layout
-
-\begin_layout Standard
-Then we have used a given function in order to determine the length between
- strings for each image and extracted from those the common corners found
- in each image.
- 
-\end_layout
-
-\begin_layout Standard
-Lastly we tested the descriptor performance over rotated images and we have
- found a weakness finding common corners.
- This is mainly due to the pattern we have generated being A-symmetrical.
- 
+...
 \end_layout
 
 \begin_layout Subsection
@@ -897,30 +1436,11 @@ Lastly we tested the descriptor performance over rotated images and we have
 
 \end_layout
 
-\begin_layout Standard
-We've chosen to randomize our 
-\begin_inset Formula $X,Y$
+\begin_layout Subsection
+\begin_inset space ~
 \end_inset
 
- coordinates using a uniform distribution.
- We used 
-\begin_inset Formula $numpy.random.randit$
-\end_inset
 
- for both 
-\begin_inset Formula $X$
-\end_inset
-
- and Y with a lower bound of 
-\begin_inset Formula $-patchWidth/2$
-\end_inset
-
- and an upper bound of 
-\begin_inset Formula $patchWidth/2$
-\end_inset
-
-.
- 
 \end_layout
 
 \begin_layout Subsection
@@ -930,10 +1450,11 @@ We've chosen to randomize our
 
 \end_layout
 
-\begin_layout Standard
-We simply iterated over the pattern we have fabricated earlier, compared
- each of the pixels pairs and assembled a 1's and 0's string for each comparison
- for each corner.
+\begin_layout Subsection
+\begin_inset space ~
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -943,32 +1464,11 @@ We simply iterated over the pattern we have fabricated earlier, compared
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $briefLite$
+\begin_layout Subsection
+\begin_inset space ~
 \end_inset
 
- is simply a wrapper of previously implemented functions.
- It first loads the 
-\begin_inset Formula $testPattern$
-\end_inset
 
- matrix, calls 
-\begin_inset Formula $DoGdetector$
-\end_inset
-
- which we implemented in part A and then calls 
-\begin_inset Formula $computeBrief$
-\end_inset
-
- to compute 
-\begin_inset Formula $locs$
-\end_inset
-
- and 
-\begin_inset Formula $desc$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Subsection
@@ -978,555 +1478,22 @@ We simply iterated over the pattern we have fabricated earlier, compared
 
 \end_layout
 
-\begin_layout Standard
-First we'll match couple of the chicken broth pictures:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/chicken_3_4.png
-	lyxscale 50
-	scale 40
-
+\begin_layout Subsection
+\begin_inset space ~
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $chickenbroth{\text{\_}}03.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $chickenbroth{\text{\_}}04.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Since both cans are facing almost the same direction, we get pretty good
- matching.
- We see most of the text matches as well as the edge of the cup in the middle.
-\end_layout
-
-\begin_layout Standard
-Moving forward to the next couple:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/incline_L_R.png
-	lyxscale 50
-	scale 50
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $incline{\text{\_}}L.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $incline{\text{\_}}R.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can see most of the bridge keypoints are matching to one another and
- also good matchin of the high tower.
- However, we do see that we get matches for different buildings that are
- to the right of the tower in one picture and are to the left in ther other.
-\end_layout
-
-\begin_layout Standard
-For matching the Computer Vision book, we tested 
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- versus all given images and then did a second test to match how multiple
- objects match using 
-\begin_inset Formula $pf{\text{\_}}floor.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}floor{\text{\_}}rot.jpg$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The best results are for 
-\begin_inset Formula $pf{\text{\_}}desk.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}stand.jpg$
-\end_inset
-
- since they both show the book facing in the same direction, without any
- rotation in the 
-\begin_inset Formula $XY$
-\end_inset
-
- plane (although there is some angle toward the viewer)
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/pf_desk.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}desk.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/pf_stand.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}stand.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can see that both cases match a good amount of features both in text
- and in the cover picture with a relatively small number of false matches.
- Moving to a match with multiple objects, we see some false matches:
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/pf_floor.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}floor.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can see that although the Computer Vision book is aligned the same way
- in both images, we get some false matches to other book covers, but not
- much more than we had seen in the chicken broth case, for example.
-\end_layout
-
-\begin_layout Standard
-However, once we introduce rotation, we get far less appropriate matches:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/pf_pile.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}pile.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/comparison/pf_floor_rot.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}scan{\text{\_}}scaled.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}floor{\text{\_}}rot.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In both cases, not only that the book we try to match is rotated, but we
- see similar features in two other books which cause even more false matching.
- This shows that our implementation is sensitive to rotations.
-\end_layout
-
-\begin_layout Standard
-Our last test was of the same picture rotated:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/book_rot.png
-	lyxscale 50
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $pf{\text{\_}}floor.jpg$
-\end_inset
-
- and 
-\begin_inset Formula $pf{\text{\_}}floor{\text{\_}}rot.jpg$
-\end_inset
-
- matching
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can see that even with a 
-\begin_inset Formula $90\dg$
-\end_inset
-
- rotation, we match most keypoints.
- This is due to the fact that although the picture is rotated and the matching
- did suffer some false matching, we have far more features that actually
- exists in both pictures and thus we get better results than matching the
- Computer Vision book to an image including two additional books.
 \end_layout
 
 \begin_layout Subsection
-Bonus
-\end_layout
-
-\begin_layout Standard
-We have created a bar graph matching 
-\begin_inset Formula $model\text{{\text{\_}}}chickenbroth.jpg$
-\end_inset
-
- against itself in increments of 
-\begin_inset Formula $10$
-\end_inset
-
- degrees up to 
-\begin_inset Formula $90$
-\end_inset
-
- degrees.
- The results are as follows:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/bonus.png
-	lyxscale 50
-	scale 30
-
+\begin_inset space ~
 \end_inset
 
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Number of matches as a function of the rotation angle
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The graph shows that even a 
-\begin_inset Formula $10$
-\end_inset
-
- degree rotation drops the number of matches by more than a half, and for
- a change of 
-\begin_inset Formula $20$
-\end_inset
-
- degrees the matching falls down to around 
-\begin_inset Formula $15\%$
-\end_inset
-
-, a level in which it stays for all degrees up to 
-\begin_inset Formula $90$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We believe this is the case because of the way we match features using the
- same coordinates and thus makes it prone to errors when using real images
- which are non-symmetrical.
- 
-\end_layout
-
-\begin_layout Standard
-If we use a picture which is more symmetrical, such as the polygons we showed
- at Q1, we get much better matching for rotations:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename media/polygons_match.png
-	lyxscale 50
-	scale 30
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Number of matches as a function of the rotation angle using 
-\begin_inset Formula $polygons.jpg$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
+\begin_layout Subsection
+\begin_inset space ~
 \end_inset
 
 
