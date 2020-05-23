@@ -201,8 +201,107 @@ Summary
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+The frog images are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog1.jpg
+	lyxscale 50
+	width 200pt
+	height 160pt
+
+\end_inset
+
+
 \begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog2.jpg
+	lyxscale 50
+	width 200pt
+	height 160pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Images under /data/frogs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And the horses images are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse1.png
+	lyxscale 50
+	width 200pt
+	height 112.5pt
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse2.jpg
+	lyxscale 30
+	width 200pt
+	height 112.5pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Images under /data/horses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
@@ -215,8 +314,402 @@ Summary
 
 \end_layout
 
+\begin_layout Standard
+The classic method we've chosen is ...
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert classic method data
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our deep-learning based method was DeepLabv3 because of its high success
+ rate on the 2012 PASCAL VOC dataset (as shown in tutorial 5).
+ We got the following segmentations:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q2_deep_frogs_seg.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segmentations of the frog images using DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It should be noted that DeepLabv3 does not have frogs as a class.
+ Inspecting the model output for these images gives back a 3 for both, which
+ translates to a bird.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q2_deep_horses_seg.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segmentations of the horse images using DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For the horses images the model predicts the segmented object correctly,
+ labeling both images as 13, which translates to a horse.
+\end_layout
+
+\begin_layout Standard
+Using the above segments to isolate the objects, we get:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q2_deep_frogs_masked.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Frogs isolated using the segmentation from DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Inspecting the results we can see that the left frog lost its right legs
+ and some of its left while the right one was cropped with good success,
+ but we did get a mispediction due to an object at the bottom of the picture.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q2_deep_horses_masked.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Horses isolated using the segmentation from DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Compared to the frog results, the horses did not lose any limbs during the
+ segmentation.
+ There are still some rough edges around the horses themselves.
+ 
+\end_layout
+
 \begin_layout Subsection
 \begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The images we used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_cat.jpeg
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_kindle.jpg
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_tv.jpg
+	lyxscale 50
+	width 200pt
+	height 200pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Same cat featured at HW2, a kindle e-reader and a TV
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The segmentation output was:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q4_deep_seg.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segmentations of our images using DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can see that there were multiple classes segmented at the TV image, and
+ that both the kindle and the cat recognized a single object.
+ Inspecting the model output, we get for the TV image 9, 18 and 20 which
+ are chair, sofa and tvmonitor.
+ The kindle images yields 15 which is a person and the cat image was recognized
+ correclty and returns 8.
+\end_layout
+
+\begin_layout Standard
+Using the above segments to isolate the objects, we get:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q4_deep_masked.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Our images isolated using the segmentation from DeepLabv3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can see the multiple objects recognized in the TV Image, that the kindle
+ was not recognized at all but rather the human holding it and the cat was
+ recognized succesfully.
+ If we replot the TV image taking only the pixels that were classified as
+ TV, we get:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q4_tv_replot.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TV image isolated using the segmentation from DeepLabv3 and using tvmonitor
+ class pixels only
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 

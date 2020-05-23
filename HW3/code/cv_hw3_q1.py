@@ -9,7 +9,7 @@ import os
 import matplotlib.pyplot        as plt
 import numpy                    as np
 import cv2
-from PIL                        import Image
+from PIL                        import Image, ImageFilter
 
 
 
@@ -17,21 +17,25 @@ from PIL                        import Image
 #                               constants                                     #
 ###############################################################################
 # filesystem related 
-DIR_MY_DATA     = 'my_data'
-DIR_DATA        = 'data'
-SUBDIR_FROGS    = 'frogs'
-SUBDIR_HORSES   = 'horses'
-IMG_COW         = 'cow.jpg'
-IMG_SHEEP       = 'sheep.jpg'
-TXT_LABELS      = 'imagenet1000_clsidx_to_labels.txt'
+DIR_MY_DATA         = 'my_data'
+DIR_DATA            = 'data'
+SUBDIR_FROGS        = 'frogs'
+SUBDIR_HORSES       = 'horses'
+SUBDIR_RAND_IMAGES  = 'random_images'
+IMG_COW             = 'cow.jpg'
+IMG_SHEEP           = 'sheep.jpg'
+IMG_BEACH           = 'beach.jpg'
+TXT_LABELS          = 'imagenet1000_clsidx_to_labels.txt'
 # model transform
-VGG16_HEIGHT    = 224
-VGG16_WIDTH     = 224
-NORM_MEAN       = [0.485, 0.456, 0.406]
-NORM_STD        = [0.229, 0.224, 0.225]
-
+VGG16_HEIGHT        = 224
+VGG16_WIDTH         = 224
+NORM_MEAN           = [0.485, 0.456, 0.406]
+NORM_STD            = [0.229, 0.224, 0.225]
+# model constants
+DEEP_LAB_CLASSES    = 21
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 ###############################################################################
 #                               transforms                                    #
@@ -72,52 +76,30 @@ def load_images(fp):
     return img_list
 
 
-def pil_to_cv(pil_img):
-    # desc
-    # converts a PIL image format to cv2 formart
-    #
-    # input
-    # pil_img - image object loaded using PIL Image
-    #
-    # output
-    # cv2 image object
-    im_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
-    return cv2.cvtColor(im_bgr, cv2.COLOR_BGR2RGB)
-
-
-def cv_to_pil(cv_img):
-    # desc
-    # converts a cv2 image format to PIL formart
-    #
-    # input
-    # cv_img - image object loaded using cv2
-    #
-    # output
-    # PIL image object
-    return Image.fromarray(cv_img)
-
-
-def wrpr_grabcut(img_list):
-    # desc
-    # a wrapper for grabcut image segmentation algorithm implementation
-    # by opencv
-    #
-    # input
-    # img_list - list of images to segment
-    #
-    # output
-    # seg_list - list of segmentated images from the input list
+def blur_images(img_list):
+    blurred = []
     for img in img_list:
-        cv2_img     = pil_to_cv(img)
-        mask        = np.zeros(cv2_img.shape[:2], np.uint8)
-        bgd_model   = np.zeros((1, 65), np.float64)
-        fgd_model   = np.zeros((1, 65), np.float64)
-        rct         = (580,175,430,525)
-        cv2.grabCut(cv2_img, mask, rct, bgd_model, fgd_model, 100, cv2.GC_INIT_WITH_RECT)
-        mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
-        img = img*mask2[:,:,np.newaxis]
-        plt.imshow(img)
-        plt.show()
+        blr_img = img.filter(ImageFilter.BLUR)
+        blurred.append(blr_img)
+    return blurred
+
+
+
+def get_palette(classes):
+    # desc
+    # creates a color palette according to the number of classes of the 
+    # model
+    #
+    # input
+    # classes - number of classes the model can recognize
+    #
+    # output
+    # colors - a palette of classes colors
+    palette = torch.tensor([2 ** 25 -1, 2 ** 15 - 1, 2 ** 21 - 1])
+    colors = torch.as_tensor([i for i in range(classes)])[:, None] * palette
+    colors = (colors % 255).numpy().astype('uint8')
+    return colors
+
 
 
 def predict_segment(model, img_list):
@@ -155,7 +137,6 @@ def predict_image_segment(model, img):
     return output.argmax(0)
 
 
-
 def preprocess_image_deeplab(img):
     # desc
     # preprocess a single image to fit deeplab prerequisites                     
@@ -168,29 +149,62 @@ def preprocess_image_deeplab(img):
     return transform_deeplab(img).unsqueeze(0)
 
 
-def plot_segmentation(pred_list):
-    # desc
-    # takes a list of tuples in the form of (image, segmentation) and plots the
-    # segmented object using a mask created from the segmentation
-    #     #
-    # input
-    # pred_list - list of predicted segmentation in the form of (image, segmentation)
+#def create_obj_mask(predicted_image):
+#    BW_COLORS = np.array([[0,0,0], [255,255,255]])
+#    img, segment = predicted_image[0]
+#    r = Image.fromarray(segment.byte().cpu().numpy()).resize(img.size)
+#    r.putpalette(BW_COLORS)
+#    img = r.convert('1')
+#    fig=plt.figure(figsize=(15,15))
+#    ax=fig.add_subplot(111)
+#    ax.imshow(img)
+#    ax.set_axis_off()
+#    plt.show()
+#    return r
+
+
+
+def plot_segments(pred_list, colors_palette, img_label):
+    palettes = []
     for img, segment in pred_list:
-        palette = torch.tensor([2 ** 25 -1, 2 ** 15 - 1, 2 ** 21 - 1])
-        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-        colors = (colors % 255).numpy().astype('uint8')
         r = Image.fromarray(segment.byte().cpu().numpy()).resize(img.size)
-        r.putpalette(colors)
+        r.putpalette(colors_palette)
+        palettes.append(r)
 
+    num_im = len(palettes)
+    _, axes = plt.subplots(1, num_im)
+    for i, p in enumerate(palettes):
+        axes[i].imshow(p)
+        axes[i].set_title(img_label + ': seg. for img #' + str(i + 1))
+        axes[i].set_xticks([])
+        axes[i].set_yticks([])  
+    plt.show()
+
+
+def plot_object(pred_list, img_label):
+    masked = []
+    for img, segment in pred_list:
         mask = torch.zeros_like(segment).float().to(device)
-        mask[segment == 13]
+        mask[segment != 0] = 1
         masked_img = img * mask.unsqueeze(2).byte().cpu().numpy()
+        masked.append(masked_img)
 
+    num_im = len(masked)
+    _, axes = plt.subplots(1, num_im)
+    if num_im == 1:
+        img = masked[0]
+        axes.imshow(img)
+        axes.set_title(img_label + ': masked img')
+        axes.set_xticks([])
+        axes.set_yticks([])
+    else:
+        for i, p in enumerate(masked):
+            axes[i].imshow(p)
+            axes[i].set_title(img_label + ': masked img #' + str(i + 1))
+            axes[i].set_xticks([])
+            axes[i].set_yticks([])  
+    plt.show()
 
-        fig = plt.figure(figsize=(15,15))
-        ax = fig.add_subplot(111)
-        ax.imshow(masked_img)
-        plt.show()
 
 
 def predict_class(model, im_list, fp_labels):
@@ -273,7 +287,6 @@ def plot_prediction(pred_list):
 ###############################################################################
 def main():
     root = os.path.dirname(__file__)
-
     fp_labels = os.path.join(root, DIR_DATA, TXT_LABELS)
 
     # SUBQUESTION 1.1
@@ -282,36 +295,62 @@ def main():
     img_frogs = load_images(fp_frogs)
     img_horses = load_images(fp_horses)
 
-    # SUBQUESTION 1.2
-    #cls_seg = wrpr_grabcut(img_frogs)
-    #cls_seg = wrpr_grabcut(img_horses)
-
+    # SUBQUESTION 1.2 - CLASSIC METHOD
+    # TODO: not implemented yet
+    
+    
+    # SUBQUESTION 1.2 - DEEP LEARNING BASED METHOD
     model = torch.hub.load('pytorch/vision:v0.5.0', 'deeplabv3_resnet101', pretrained = True)
     model.eval()
     model = model.to(device)
-    pred_frogs = predict_segment(model, img_horses)
-    print(["{}: {}".format(i+1,labels[i]) for i in range(len(labels))])
-    for _, pred in pred_frogs:
-        print(np.unique(pred.cpu().numpy()))
+    deeplab_palette = get_palette(DEEP_LAB_CLASSES)
+    #pred_frogs = predict_segment(model, img_frogs)
+    #plot_segments(pred_frogs, deeplab_palette, 'frogs')
+    #plot_object(pred_frogs, 'frogs')
+    #pred_horses = predict_segment(model, img_horses)
+    #plot_segments(pred_horses, deeplab_palette, 'horses')
+    #plot_object(pred_horses, 'horses')
 
-    #plot_segmentation(pred_frogs)
+    # SUBQUESTION 1.3
+    # fp_rnd_images = os.path.join(root, DIR_MY_DATA, SUBDIR_RAND_IMAGES)
+    # img_rnd_images = load_images(fp_rnd_images)
+    # pred_rnd = predict_segment(model, img_rnd_images)
+    # plot_segments(pred_rnd, deeplab_palette, 'SQ3')
+    # plot_object(pred_rnd, 'SQ3')
 
-    exit(1)
+
+    # SUBQUESTION 1.5
+    # TODO: find pre or post processing to improve edges
 
     # SUBQUESTION 1.6
-    model = torchvision.models.vgg16(pretrained = True, progress = True)
-    model.eval()
+    #model = torchvision.models.vgg16(pretrained = True, progress = True)
+    #model.eval()
+    #model = model.to(device)
+
 
     # SUBQUESTION 1.7
     fp_cow = os.path.join(root, DIR_DATA, IMG_COW)
     img_cow = Image.open(fp_cow)    
-    fp_sheep = os.path.join(root, DIR_DATA, IMG_SHEEP)
-    img_sheep = Image.open(fp_sheep)
-    img_list = [img_cow, img_sheep]
-    pred_animals = predict_class(model, img_list, fp_labels)
-    plot_prediction(pred_animals)
+    #fp_sheep = os.path.join(root, DIR_DATA, IMG_SHEEP)
+    #img_sheep = Image.open(fp_sheep)
+    #img_list = [img_cow, img_sheep]
+    #pred_animals = predict_class(model, img_list, fp_labels)
+    #plot_prediction(pred_animals)
 
+    # SUBQUESTION 1.8
+    #pred_cow = predict_segment(model, [img_cow])
+    #plot_object(pred_cow, 'cow')
 
+    # SUBQUESTION 1.9
+    #fp_beach = os.path.join(root, DIR_DATA, IMG_BEACH)
+    #img_beach = Image.open(fp_beach) 
+    ## we resize the cow to fit in the beach image   
+    #img_cow.thumbnail(size = (250, 250))
+    #pred_cow = predict_segment(model, [img_cow])
+    #masked_cow = create_obj_mask(pred_cow)
+#
+    #img_beach.paste(img_cow, (300, 150))
+    #img_beach.save('mod_beach.jpg')
 
 
 if __name__ == "__main__":
