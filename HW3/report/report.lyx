@@ -201,6 +201,104 @@ Summary
 
 \end_layout
 
+\begin_layout Standard
+The frog images are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog1.jpg
+	lyxscale 50
+	width 200pt
+	height 160pt
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog2.jpg
+	lyxscale 50
+	width 200pt
+	height 160pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Images under /data/frogs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And the horses images are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse1.png
+	lyxscale 50
+	width 200pt
+	height 112.5pt
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse2.jpg
+	lyxscale 30
+	width 200pt
+	height 112.5pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Images under /data/horses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 \begin_inset space ~
 \end_inset
@@ -210,6 +308,112 @@ Summary
 
 \begin_layout Subsection
 \begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The images we used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/q3_cat.jpeg
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A living being: Same cat features at HW2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/q3_kindle.jpg
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A commonly-used object: A kindle e-reader
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/use/git/ComputerVision046746/HW3/code/my_data/q3_poles.JPG
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A not-so-commonly-used object: Trekking Poles
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 

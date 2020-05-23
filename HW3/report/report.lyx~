@@ -236,11 +236,57 @@ Summary
 
 \end_layout
 
+\begin_layout Standard
+We chose VGG16.
+\end_layout
+
 \begin_layout Subsection
 \begin_inset space ~
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Using the provided cow.jpg and sheep.jpg, we recieve the following predictions:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graphics/q1/q7.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+VGG16's prediction for cow.jpg and sheep.jpg
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+While the model predicted a wrong class for both images, the predicted classes
+ are somewhat related to the actual classes.
 \end_layout
 
 \begin_layout Subsection

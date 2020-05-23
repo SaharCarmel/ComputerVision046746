@@ -30,9 +30,19 @@ VGG16_WIDTH     = 224
 NORM_MEAN       = [0.485, 0.456, 0.406]
 NORM_STD        = [0.229, 0.224, 0.225]
 
+
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 ###############################################################################
 #                               transforms                                    #
 ###############################################################################
+transform_deeplab = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize(mean = NORM_MEAN, std = NORM_STD)
+    ]
+)
+
 transform_vgg = transforms.Compose(
     [
         transforms.Resize((VGG16_HEIGHT, VGG16_WIDTH)),
@@ -110,7 +120,80 @@ def wrpr_grabcut(img_list):
         plt.show()
 
 
-def predict(model, im_list, fp_labels):
+def predict_segment(model, img_list):
+    # desc
+    # takes in a model, list of images and a path to labels file and match
+    # between the predicte class to the image
+    #
+    # input
+    # model     - the model which evaluates the class
+    # im_list   - list of images which class we predict
+    # fp_labels - path to a labels file
+    #
+    # output
+    # im_label list - list of tuples in the form of (image, predicted class)
+    pred_list = []
+    for img in img_list:
+        img_preprocess = preprocess_image_deeplab(img)
+        pred_segment = predict_image_segment(model, img_preprocess)
+        pred_list.append((img, pred_segment))
+    return pred_list
+
+
+def predict_image_segment(model, img):
+    # desc
+    # predicts the segments in a given image using model
+    #
+    # input
+    # model     - model which predicts the image segments
+    # img       - image which we want to segment
+    #
+    # output
+    # 
+    with torch.no_grad():
+        output = model(img)['out'][0]
+    return output.argmax(0)
+
+
+
+def preprocess_image_deeplab(img):
+    # desc
+    # preprocess a single image to fit deeplab prerequisites                     
+    #
+    # input
+    # img - a single image to preprocess
+    #
+    # output
+    # a preprocessed image which can be forwarded to the model via model(img)
+    return transform_deeplab(img).unsqueeze(0)
+
+
+def plot_segmentation(pred_list):
+    # desc
+    # takes a list of tuples in the form of (image, segmentation) and plots the
+    # segmented object using a mask created from the segmentation
+    #     #
+    # input
+    # pred_list - list of predicted segmentation in the form of (image, segmentation)
+    for img, segment in pred_list:
+        palette = torch.tensor([2 ** 25 -1, 2 ** 15 - 1, 2 ** 21 - 1])
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype('uint8')
+        r = Image.fromarray(segment.byte().cpu().numpy()).resize(img.size)
+        r.putpalette(colors)
+
+        mask = torch.zeros_like(segment).float().to(device)
+        mask[segment == 13]
+        masked_img = img * mask.unsqueeze(2).byte().cpu().numpy()
+
+
+        fig = plt.figure(figsize=(15,15))
+        ax = fig.add_subplot(111)
+        ax.imshow(masked_img)
+        plt.show()
+
+
+def predict_class(model, im_list, fp_labels):
     # desc
     # takes in a model, list of images and a path to labels file and match
     # between the predicte class to the image
@@ -194,28 +277,39 @@ def main():
     fp_labels = os.path.join(root, DIR_DATA, TXT_LABELS)
 
     # SUBQUESTION 1.1
-    #fp_frogs = os.path.join(root, DIR_DATA, SUBDIR_FROGS)
-    #fp_horses = os.path.join(root, DIR_DATA, SUBDIR_HORSES)
-    #img_frogs = load_images(fp_frogs)
-    #img_horses = load_images(fp_horses)
+    fp_frogs = os.path.join(root, DIR_DATA, SUBDIR_FROGS)
+    fp_horses = os.path.join(root, DIR_DATA, SUBDIR_HORSES)
+    img_frogs = load_images(fp_frogs)
+    img_horses = load_images(fp_horses)
 
     # SUBQUESTION 1.2
     #cls_seg = wrpr_grabcut(img_frogs)
     #cls_seg = wrpr_grabcut(img_horses)
 
+    model = torch.hub.load('pytorch/vision:v0.5.0', 'deeplabv3_resnet101', pretrained = True)
+    model.eval()
+    model = model.to(device)
+    pred_frogs = predict_segment(model, img_horses)
+    print(["{}: {}".format(i+1,labels[i]) for i in range(len(labels))])
+    for _, pred in pred_frogs:
+        print(np.unique(pred.cpu().numpy()))
+
+    #plot_segmentation(pred_frogs)
+
+    exit(1)
 
     # SUBQUESTION 1.6
     model = torchvision.models.vgg16(pretrained = True, progress = True)
     model.eval()
+
+    # SUBQUESTION 1.7
     fp_cow = os.path.join(root, DIR_DATA, IMG_COW)
     img_cow = Image.open(fp_cow)    
     fp_sheep = os.path.join(root, DIR_DATA, IMG_SHEEP)
     img_sheep = Image.open(fp_sheep)
     img_list = [img_cow, img_sheep]
-    pred_animals = predict(model, img_list, fp_labels)
+    pred_animals = predict_class(model, img_list, fp_labels)
     plot_prediction(pred_animals)
-
-
 
 
 
