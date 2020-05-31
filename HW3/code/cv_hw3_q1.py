@@ -172,6 +172,7 @@ def predict_segment(model, img_list):
     pred_list = []
     for img in img_list:
         img_preprocess = preprocess_image_deeplab(img)
+        # img_preprocess = img_preprocess.to('cuda:0')
         pred_segment = predict_image_segment(model, img_preprocess)
         pred_list.append((img, pred_segment))
     return pred_list
