@@ -50,7 +50,7 @@ def extractGreen(img):
     return result
 
 folderPaths = []
-vidPath1= os.path.join(os.getcwd(),'data', 'sahar.mp4')
+vidPath1= os.path.join(os.getcwd(),'data', 'squat.mp4')
 vidPath2= os.path.join(os.getcwd(),'data', 'blast.mp4')
 videoList = [vidPath1, vidPath2]
 
@@ -79,7 +79,9 @@ img_sahar = load_images(folderPaths[0], rot=0)
 pred_rnd = predict_segment(model, img_sahar)
 effect_images = load_images(folderPaths[1])
 # bgLoader = backgroundIter(folderPaths[1])
-bg = Image.open(os.path.join(os.getcwd(), 'data', 'pokemon.jpg'))
+#%%
+
+bg = Image.open(os.path.join(os.getcwd(), 'data', 'technion.jpg'))
 lu = [256 for x in range(256)]
 lu[0] = 0
 lu_green = np.zeros(np.array(effect_images[0]).shape[0:2])
@@ -109,14 +111,14 @@ for i, (image, effect) in enumerate(zip(pred_rnd, effect_images)):
     sahar_edit = paste_image(
         front=image,
         bg=bgcopy,
-        os = (0,0),
+        os = (0,250),
         mask=binary_mask_sahar,
         resize=False
     )
     sahar_edit = paste_image(
         front = effect,
         bg=sahar_edit,
-        os = (0,0),
+        os = (100,900),
         mask=binary_mask_effect,
         resize=False
     )
@@ -127,7 +129,6 @@ for i, (image, effect) in enumerate(zip(pred_rnd, effect_images)):
     # axes.set_xticks([])
     # axes.set_yticks([])
     # plt.show()
-#%%
 
 savePath = os.path.join(os.getcwd(),'data', 'to_vid')
 image_seq_to_video(savePath, fps=30)
