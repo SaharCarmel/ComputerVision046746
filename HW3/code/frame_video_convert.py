@@ -6,11 +6,17 @@ import numpy as np
 import glob
 import os
 
+def sortfunc(elem):
+    number = int(os.path.basename(elem).split('.')[0])
+    return number
 
 def image_seq_to_video(imgs_path, output_path='./video.mp4', fps=15.0):
     output = output_path
     img_array = []
-    for filename in glob.glob(os.path.join(imgs_path, '*.jpg')):
+    print('check')
+    filesList = glob.glob(os.path.join(imgs_path, '*.jpg'))
+    filesList.sort(key=sortfunc)
+    for filename in filesList:
         img = cv2.imread(filename)
         height, width, layers = img.shape
         # img = cv2.resize(img, (width // 2, height // 2))
