@@ -228,7 +228,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog1.jpg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/data/frogs/frog1.jpg
 	lyxscale 50
 	width 200pt
 	height 160pt
@@ -241,7 +241,7 @@ status open
 
 
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/data/frogs/frog2.jpg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/data/frogs/frog2.jpg
 	lyxscale 50
 	width 200pt
 	height 160pt
@@ -281,7 +281,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse2.jpg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/data/horses/horse2.jpg
 	lyxscale 30
 	width 200pt
 	height 112.5pt
@@ -294,7 +294,7 @@ status open
 
 
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/data/horses/horse1.png
+	filename D:/home/use/git/ComputerVision046746/HW3/code/data/horses/horse1.png
 	lyxscale 50
 	width 200pt
 	height 112.5pt
@@ -737,7 +737,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_cat.jpeg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_cat.jpeg
 	lyxscale 50
 	scale 50
 
@@ -749,7 +749,7 @@ status open
 
 
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_kindle.jpg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_kindle.jpg
 	lyxscale 50
 	scale 50
 
@@ -761,7 +761,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename /home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_tv.jpg
+	filename D:/home/use/git/ComputerVision046746/HW3/code/my_data/random_images/q3_tv.jpg
 	lyxscale 50
 	width 200pt
 	height 200pt
@@ -1305,28 +1305,197 @@ Summary
 \end_layout
 
 \begin_layout Subsection
-\begin_inset space ~
+2 frames
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename D:/Programming projects/ComputerVision046746/HW3/code/data/jump4/0007.jpg
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename D:/Programming projects/ComputerVision046746/HW3/code/data/jump4/0101.jpg
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sahar frames
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Subsection
-\begin_inset space ~
+Sahar segmentation
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename frame1_sahar.png
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename effect2_seg.png
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sahar segement
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Subsection
-\begin_inset space ~
+effect green-screen
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename effect1_seg.png
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename frame2_sahar.png
+	lyxscale 10
+	width 50col%
+
 \end_inset
 
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Green screen effect
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We have simply used a color filter on the image and created a mask out of
+ it.
+\end_layout
+
 \begin_layout Subsection
-\begin_inset space ~
+Result
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename D:/Programming projects/ComputerVision046746/HW3/code/data/to_vid/1.jpg
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename D:/Programming projects/ComputerVision046746/HW3/code/data/to_vid/38.jpg
+	lyxscale 10
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Final result
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
