@@ -1301,7 +1301,14 @@ Summary
 \end_layout
 
 \begin_layout Standard
-...
+In this question we have used the segmentation NN we have used in the last
+ part to segment the human outside of the video.
+ We have used a simple green color mask on the effect with the green background
+ to extract the effect mask.
+ We stitched those together on top of CS building in the technion and created
+ a cool effect of a rocket.
+ Really cool stuff.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -1403,14 +1410,14 @@ Sahar segement
 \end_layout
 
 \begin_layout Subsection
-effect green-screen
+Effect green-screen
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1452,6 +1459,11 @@ Green screen effect
 \begin_layout Standard
 We have simply used a color filter on the image and created a mask out of
  it.
+ The condition is as follows: 
+\begin_inset Formula $(greens<35)|(reds>greens)|(blues>greens)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
