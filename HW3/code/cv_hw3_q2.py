@@ -24,6 +24,7 @@ def binary_mask(img, mask, colors_palette):
     bw_mask = img_mask.convert('L')
     return bw_mask
 
+
 class backgroundIter():
     def __init__(self, folderPath):
         self.folderPath = folderPath
@@ -49,8 +50,9 @@ def extractGreen(img):
     result = np.where(mask, 255, 0)
     return result
 
+
 folderPaths = []
-vidPath1= os.path.join(os.getcwd(),'data', 'squat.mp4')
+vidPath1= os.path.join(os.getcwd(),'data', 'jump4.mp4')
 vidPath2= os.path.join(os.getcwd(),'data', 'blast.mp4')
 videoList = [vidPath1, vidPath2]
 
@@ -111,14 +113,14 @@ for i, (image, effect) in enumerate(zip(pred_rnd, effect_images)):
     sahar_edit = paste_image(
         front=image,
         bg=bgcopy,
-        os = (0,250),
+        os = (0,250-5*i),
         mask=binary_mask_sahar,
         resize=False
     )
     sahar_edit = paste_image(
         front = effect,
         bg=sahar_edit,
-        os = (100,900),
+        os = (-100,600),
         mask=binary_mask_effect,
         resize=False
     )
